@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.elsawaf.thebrilliant.a3smovies.MainActivity"
+    tools:ignore="RtlHardcoded">
+
+    <TextView
+        android:id="@+id/text_view_show_movies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_show_movies"
+        android:textSize="25sp"/>
+
+    <Spinner
+        android:id="@+id/spinner_movies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/text_view_show_movies"
+        android:entries="@array/spinner_items"
+        />
+
+    <TextView
+        android:id="@+id/text_view_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:layout_margin="30dp"
+        android:visibility="invisible"
+        android:text="@string/title_no_result"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_movies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text_view_show_movies"
+        android:layout_marginTop="5dp"/>
+
+</RelativeLayout>

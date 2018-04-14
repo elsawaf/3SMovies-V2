@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">3S Movies</string>
+    <string name="title_show_movies">Show movies by:</string>
+    <string name="title_no_result">There is no result, please try again later.</string>
+    <string name="title_no_network">Please, check the internet connection</string>
+    <string name="activity_movie_detail">Movie Detail</string>
+
+    <string-array name="spinner_items">
+        <item>Most Popular</item>
+        <item>Top Rated</item>
+    </string-array>
+</resources>
