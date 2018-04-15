@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
@@ -22,10 +23,16 @@ import com.google.gson.GsonBuilder;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener, MoviesAdapter.MyOnClickListener {
 
+    private static final String TAG = "elsawaf";
     private RecyclerView recyclerView;
     private Spinner spinner;
     private ArrayList<Movie> movies;
@@ -53,13 +60,49 @@ public class MainActivity extends AppCompatActivity implements
         spinner.setOnItemSelectedListener(this);
 
         if (NetworkUtils.hasNetworkAccess(this)){
-            URL url = NetworkUtils.buildMoviesUrl(NetworkUtils.PATH_POPULAR);
-            new GitMoviesListTask().execute(url);
+            makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
         }
         else {
             Toast.makeText(this, R.string.title_no_network, Toast.LENGTH_SHORT).show();
             toggleEmptyView();
         }
+    }
+
+    private void makeRetrofitCall(int sortBy) {
+        showProgressPar();
+
+        Call<MoviesList> call;
+        if (sortBy == Constants.SORT_MOVIES_BY_POPULAR)
+            call = NetworkUtils.getRetrofitClient().getPopularList(NetworkUtils.MY_API_KEY);
+        else
+            call = NetworkUtils.getRetrofitClient().getTopRatedList(NetworkUtils.MY_API_KEY);
+
+        call.enqueue(new Callback<MoviesList>() {
+            @Override
+            public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
+                if (response != null){
+                    Log.d(TAG, "onResponse: " + response.code());
+                    MoviesList list = response.body();
+                    movies = (ArrayList<Movie>) list.getResults();
+                    adapter.updateData(movies);
+                }
+                progressBar.setVisibility(View.INVISIBLE);
+                toggleEmptyView();
+            }
+
+            @Override
+            public void onFailure(Call<MoviesList> call, Throwable t) {
+                movies = null;
+                progressBar.setVisibility(View.INVISIBLE);
+                toggleEmptyView();
+            }
+        });
+    }
+
+    private void showProgressPar() {
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+        emptyTextView.setVisibility(View.INVISIBLE);
     }
 
     private void toggleEmptyView() {
@@ -75,16 +118,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-        URL url = null;
         switch (pos) {
             case 0:
-                url = NetworkUtils.buildMoviesUrl(NetworkUtils.PATH_POPULAR);
+                makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
                 break;
             case 1:
-                url = NetworkUtils.buildMoviesUrl(NetworkUtils.PATH_TOP_RATED);
+                makeRetrofitCall(Constants.SORT_MOVIES_BY_TOPRATED);
                 break;
         }
-        new GitMoviesListTask().execute(url);
     }
 
     @Override
@@ -97,36 +138,5 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(Constants.KEY_MOVIE_DATA, movies.get(position));
         startActivity(intent);
-    }
-
-    private class GitMoviesListTask extends AsyncTask<URL, Void, MoviesList>{
-
-        @Override
-        protected void onPreExecute() {
-//            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.INVISIBLE);
-            emptyTextView.setVisibility(View.INVISIBLE);
-        }
-
-        @Override
-        protected MoviesList doInBackground(URL... urls) {
-            String response = NetworkUtils.getResponseFromUrl(urls[0]);
-
-            Gson gson = new GsonBuilder().create();
-            MoviesList moviesList = gson.fromJson(response, MoviesList.class);
-            return moviesList;
-        }
-
-        @Override
-        protected void onPostExecute(MoviesList moviesList) {
-//            super.onPostExecute(moviesList);
-            if (moviesList != null){
-                movies = (ArrayList<Movie>) moviesList.getResults();
-                adapter.updateData(movies);
-            }
-            progressBar.setVisibility(View.INVISIBLE);
-            toggleEmptyView();
-        }
     }
 }

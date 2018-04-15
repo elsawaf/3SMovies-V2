@@ -23,15 +23,8 @@ public class MoviesList {
         return totalResults;
     }
 
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
-    }
-
     public List<Movie> getResults() {
         return results;
     }
 
-    public void setResults(List<Movie> results) {
-        this.results = results;
-    }
 }

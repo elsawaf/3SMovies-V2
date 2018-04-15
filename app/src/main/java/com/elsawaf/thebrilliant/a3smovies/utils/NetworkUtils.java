@@ -13,6 +13,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by The Brilliant on 02/03/2018.
  */
@@ -20,30 +24,14 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     public static final String TAG = NetworkUtils.class.getSimpleName();
-    public static final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie";
+    public static final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
     public final static String PATH_POPULAR = "popular";
     public final static String PATH_TOP_RATED = "top_rated";
     final static String PARAM_API_KEY = "api_key";
-    final static String MY_API_KEY = "";
+    public final static String MY_API_KEY = "";
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     final static String PATH_IMAGE_SIZE = "w342";
-
-    public static URL buildMoviesUrl (String sortBy){
-        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                .appendPath(sortBy)
-                .appendQueryParameter(PARAM_API_KEY, MY_API_KEY)
-                .build();
-
-        URL url = null;
-        try {
-            url = new URL(builtUri.toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        Log.i(TAG, "buildUrl: " + url);
-        return url;
-    }
 
     public static URL buildImageUrl (String posterPath){
         Uri builtUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
@@ -61,27 +49,18 @@ public class NetworkUtils {
         return url;
     }
 
-    public static String getResponseFromUrl (URL url) {
-        HttpURLConnection urlConnection = null;
-        try {
-            urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream in = urlConnection.getInputStream();
+    public static MoviesInterface getRetrofitClient(){
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(MOVIES_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
 
-            boolean hasInput = scanner.hasNext();
-            if (hasInput)
-                return scanner.next();
-            else
-                return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null)
-                urlConnection.disconnect();
-        }
-        return null;
+        Retrofit retrofit = builder.client(httpClient.build()).build();
+
+        MoviesInterface client = retrofit.create(MoviesInterface.class);
+
+        return client;
     }
 
     public static boolean hasNetworkAccess(Context context){
