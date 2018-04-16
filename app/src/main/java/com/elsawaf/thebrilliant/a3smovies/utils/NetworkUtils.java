@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -50,7 +51,11 @@ public class NetworkUtils {
     }
 
     public static MoviesInterface getRetrofitClient(){
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(loggingInterceptor);
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(MOVIES_BASE_URL)

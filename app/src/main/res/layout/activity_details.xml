@@ -65,9 +65,17 @@
             android:textSize="18sp" />
 
         <View
+            android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_below="@id/text_view_summary"
             android:background="@color/colorPrimary" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/line"
+            android:layout_marginTop="5dp"/>
     </RelativeLayout>
 </ScrollView>

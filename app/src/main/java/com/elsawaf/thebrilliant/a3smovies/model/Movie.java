@@ -22,64 +22,34 @@ public class Movie implements Parcelable {
     private int numberOfUsers;
     @SerializedName("release_date")
     private String releaseDate;
+    private int id;
 
-
-    public Movie(String originalTitle, String posterPath, String summary, double userRating, int numberOfUsers, String releaseDate) {
-        this.originalTitle = originalTitle;
-        this.posterPath = posterPath;
-        this.summary = summary;
-        this.userRating = userRating;
-        this.numberOfUsers = numberOfUsers;
-        this.releaseDate = releaseDate;
+    public int getId() {
+        return id;
     }
-
 
     public String getPosterPath() {
         return posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
     }
 
     public String getOriginalTitle() {
         return originalTitle;
     }
 
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
-
     public String getSummary() {
         return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
     }
 
     public double getUserRating() {
         return userRating;
     }
 
-    public void setUserRating(double userRating) {
-        this.userRating = userRating;
-    }
-
     public int getNumberOfUsers() {
         return numberOfUsers;
     }
 
-    public void setNumberOfUsers(int numberOfUsers) {
-        this.numberOfUsers = numberOfUsers;
-    }
-
     public String getReleaseDate() {
         return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     @Override
@@ -95,6 +65,10 @@ public class Movie implements Parcelable {
         dest.writeDouble(this.userRating);
         dest.writeInt(this.numberOfUsers);
         dest.writeString(this.releaseDate);
+        dest.writeInt(this.id);
+    }
+
+    public Movie() {
     }
 
     protected Movie(Parcel in) {
@@ -104,6 +78,7 @@ public class Movie implements Parcelable {
         this.userRating = in.readDouble();
         this.numberOfUsers = in.readInt();
         this.releaseDate = in.readString();
+        this.id = in.readInt();
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

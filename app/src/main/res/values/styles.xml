@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="TrailerNameStyle">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
 </resources>
