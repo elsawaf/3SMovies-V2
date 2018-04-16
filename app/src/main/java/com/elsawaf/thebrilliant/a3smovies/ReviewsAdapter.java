@@ -76,6 +76,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
                 content.setEllipsize(TextUtils.TruncateAt.END);
                 content.setMaxLines(4);
             }
+            /*to make the review content is expand and collapse when user click on it
+            * we should save the last condition after execute the action*/
             isEllipsize = !isEllipsize;
             content.setTag(isEllipsize);
         }
