@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.elsawaf.thebrilliant.a3smovies.model.Movie;
+import com.elsawaf.thebrilliant.a3smovies.model.MovieReview;
 import com.elsawaf.thebrilliant.a3smovies.model.MovieTrailer;
+import com.elsawaf.thebrilliant.a3smovies.model.ReviewsList;
 import com.elsawaf.thebrilliant.a3smovies.model.TrailersList;
 import com.elsawaf.thebrilliant.a3smovies.utils.Constants;
 import com.elsawaf.thebrilliant.a3smovies.utils.NetworkUtils;
@@ -40,10 +40,13 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     TextView titleTV;
     @BindView(R.id.text_view_summary)
     TextView summaryTV;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.trailers_recycler_view)
+    RecyclerView trailersRecyclerView;
+    @BindView(R.id.reviews_recycler_view)
+    RecyclerView reviewsRecyclerView;
+
     private ArrayList<MovieTrailer> movieTrailers;
-    private TrailersAdapter adapter;
+    private TrailersAdapter trailersAdapter;
     private Movie movie;
 
     @Override
@@ -63,21 +66,44 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         titleTV.setText(movie.getOriginalTitle());
         summaryTV.setText(movie.getSummary());
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
+        trailersRecyclerView.setLayoutManager(trailersLayoutManager);
         makeTrailersCall();
+
+        LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this);
+        reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
+        makeReviewsCall();
+
+    }
+
+    private void makeReviewsCall() {
+        Call<ReviewsList> call = NetworkUtils.getRetrofitClient().getReviewsList(movie.getId(), NetworkUtils.MY_API_KEY);
+        call.enqueue(new Callback<ReviewsList>() {
+            @Override
+            public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
+                ReviewsList list = response.body();
+                ArrayList<MovieReview> movieReviews = (ArrayList<MovieReview>) list.getResults();
+                ReviewsAdapter reviewsAdapter = new ReviewsAdapter(movieReviews);
+                reviewsRecyclerView.setAdapter(reviewsAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<ReviewsList> call, Throwable t) {
+
+            }
+        });
     }
 
     private void makeTrailersCall() {
-        Call<TrailersList> call = NetworkUtils.getRetrofitClient().getTrailersList(String.valueOf(movie.getId()), NetworkUtils.MY_API_KEY);
+        Call<TrailersList> call = NetworkUtils.getRetrofitClient().getTrailersList(movie.getId(), NetworkUtils.MY_API_KEY);
         call.enqueue(new Callback<TrailersList>() {
             @Override
             public void onResponse(Call<TrailersList> call, Response<TrailersList> response) {
                 if (response != null) {
                     TrailersList list = response.body();
                     movieTrailers = (ArrayList<MovieTrailer>) list.getResults();
-                    adapter = new TrailersAdapter(movieTrailers, DetailsActivity.this, DetailsActivity.this);
-                    recyclerView.setAdapter(adapter);
+                    trailersAdapter = new TrailersAdapter(movieTrailers, DetailsActivity.this, DetailsActivity.this);
+                    trailersRecyclerView.setAdapter(trailersAdapter);
                 }
             }
 

@@ -1,6 +1,7 @@
 package com.elsawaf.thebrilliant.a3smovies.utils;
 
 import com.elsawaf.thebrilliant.a3smovies.model.MoviesList;
+import com.elsawaf.thebrilliant.a3smovies.model.ReviewsList;
 import com.elsawaf.thebrilliant.a3smovies.model.TrailersList;
 
 import java.util.List;
@@ -24,7 +25,13 @@ public interface MoviesInterface {
 
     @GET("{id}/videos")
     Call<TrailersList> getTrailersList(
-            @Path("id") String id,
+            @Path("id") int id,
+            @Query(NetworkUtils.PARAM_API_KEY) String apiKey
+    );
+
+    @GET("{id}/reviews")
+    Call<ReviewsList> getReviewsList(
+            @Path("id") int id,
             @Query(NetworkUtils.PARAM_API_KEY) String apiKey
     );
 }
