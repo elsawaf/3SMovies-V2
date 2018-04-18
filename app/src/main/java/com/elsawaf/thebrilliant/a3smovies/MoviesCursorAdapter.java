@@ -28,7 +28,7 @@ public class MoviesCursorAdapter extends RecyclerView.Adapter<MoviesCursorAdapte
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.list_item, parent, false);
+                .inflate(R.layout.list_item, null);
 
         return new MovieViewHolder(view);
     }

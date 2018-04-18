@@ -1,11 +1,9 @@
 package com.elsawaf.thebrilliant.a3smovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements
         AdapterView.OnItemSelectedListener, MoviesAdapter.MyOnClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "elsawaf";
+    private static final String TAG = "elsawafApp";
     private RecyclerView recyclerView;
     private Spinner spinner;
     private ArrayList<Movie> movies;
@@ -45,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar progressBar;
 
     private static final int MOVIE_LOADER_ID = 0;
+    // this to track the movies list that the user choice
+    private int mUserChoice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements
         spinner.setOnItemSelectedListener(this);
 
         if (NetworkUtils.hasNetworkAccess(this)){
+            mUserChoice = 0;
             makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
         }
         else {
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
                     MoviesList list = response.body();
                     movies = (ArrayList<Movie>) list.getResults();
                     adapter.updateData(movies);
+                    recyclerView.setAdapter(adapter);
                 }
                 progressBar.setVisibility(View.INVISIBLE);
                 toggleEmptyView();
@@ -126,12 +128,15 @@ public class MainActivity extends AppCompatActivity implements
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
         switch (pos) {
             case 0:
+                mUserChoice = 0;
                 makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
                 break;
             case 1:
+                mUserChoice = 1;
                 makeRetrofitCall(Constants.SORT_MOVIES_BY_TOPRATED);
                 break;
             case 2:
+                mUserChoice = 2;
                 getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
                 break;
         }
@@ -193,12 +198,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        MoviesCursorAdapter favouriteMoviesAdapter = new MoviesCursorAdapter(data, this);
-        recyclerView.setAdapter(favouriteMoviesAdapter);
+        // to prevent loading favourites list each time user come back to activity
+        if (mUserChoice == 2) {
+            MoviesCursorAdapter favouriteMoviesAdapter = new MoviesCursorAdapter(data, this);
+            recyclerView.setAdapter(favouriteMoviesAdapter);
+        }
+        Log.i(TAG, "onLoadFinished: ");
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
+        Log.i(TAG, "onLoaderReset: ");
     }
 }

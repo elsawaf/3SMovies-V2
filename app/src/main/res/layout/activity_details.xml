@@ -45,16 +45,15 @@
             android:layout_toRightOf="@id/image_view_poster"
             android:textSize="25sp" />
 
-        <Button
+        <ImageView
             android:id="@+id/addToFavouriteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignLeft="@id/text_view_rating"
             android:layout_below="@id/text_view_date"
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/image_view_poster"
-            android:textSize="20sp"
-            android:text="Add"/>
+            android:src="@drawable/ic_like"/>
 
         <TextView
             android:id="@+id/text_view_title"

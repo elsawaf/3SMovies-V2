@@ -52,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     @BindView(R.id.reviews_recycler_view)
     RecyclerView reviewsRecyclerView;
     @BindView(R.id.addToFavouriteBtn)
-    Button addToFavouriteBtn;
+    ImageView addToFavouriteBtn;
 
     private ArrayList<MovieTrailer> movieTrailers;
     private TrailersAdapter trailersAdapter;
@@ -174,10 +174,10 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
 
     private void toggleFavouriteBtn() {
         if (movie.isFavourite()) {
-            addToFavouriteBtn.setText("Added");
+            addToFavouriteBtn.setImageResource(R.drawable.ic_liked);
         }
         else {
-            addToFavouriteBtn.setText("Add");
+            addToFavouriteBtn.setImageResource(R.drawable.ic_like);
         }
     }
 
