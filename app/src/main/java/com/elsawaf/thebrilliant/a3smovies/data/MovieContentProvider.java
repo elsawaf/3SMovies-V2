@@ -64,6 +64,18 @@ public class MovieContentProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case MOVIE_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                selection = MovieEntry.COLUMN_MOVIE_ID + "=?";
+                selectionArgs = new String[]{id};
+                retCursor = db.query(MovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
             // default case unsupported uri
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

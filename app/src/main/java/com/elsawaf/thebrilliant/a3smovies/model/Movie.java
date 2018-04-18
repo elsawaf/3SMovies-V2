@@ -23,6 +23,15 @@ public class Movie implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
     private int id;
+    private boolean isFavourite;
+
+    public boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        isFavourite = favourite;
+    }
 
     public int getId() {
         return id;

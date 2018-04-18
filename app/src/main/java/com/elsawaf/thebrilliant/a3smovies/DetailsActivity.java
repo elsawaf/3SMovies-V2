@@ -2,6 +2,7 @@ package com.elsawaf.thebrilliant.a3smovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         titleTV.setText(movie.getOriginalTitle());
         summaryTV.setText(movie.getSummary());
 
+        checkFavouritesMovies(movie.getId());
+
         LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
         makeTrailersCall();
@@ -139,6 +142,21 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     @Override
     public void onClick(View view) {
 
+        if (movie.isFavourite()) {
+            // delete from database
+            String stringId = Integer.toString(movie.getId());
+            Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+            uri = uri.buildUpon().appendPath(stringId).build();
+
+            int moviesDeleted = getContentResolver().delete(uri, null, null);
+            if (moviesDeleted > 0) {
+                movie.setFavourite(false);
+                toggleFavouriteBtn();
+            }
+            return;
+        }
+
+        // else then add to database
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
         contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginalTitle());
@@ -149,7 +167,36 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
 
         if (uri != null) {
             // added success
+            movie.setFavourite(true);
+            toggleFavouriteBtn();
+        }
+    }
+
+    private void toggleFavouriteBtn() {
+        if (movie.isFavourite()) {
             addToFavouriteBtn.setText("Added");
         }
+        else {
+            addToFavouriteBtn.setText("Add");
+        }
+    }
+
+    private boolean checkFavouritesMovies(int id) {
+        String stringId = Integer.toString(id);
+        Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(stringId).build();
+
+        Cursor cursor = getContentResolver().query(uri,
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            movie.setFavourite(true);
+            toggleFavouriteBtn();
+            return true;
+        }
+        return false;
     }
 }
