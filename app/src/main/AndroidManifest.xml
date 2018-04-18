@@ -21,7 +21,12 @@
         </activity>
         <activity android:name=".DetailsActivity"
             android:label="@string/activity_movie_detail"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"/>
+
+        <provider
+            android:authorities="com.elsawaf.thebrilliant.a3smovies"
+            android:name=".data.MovieContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

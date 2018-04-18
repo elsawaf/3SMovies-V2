@@ -8,5 +8,6 @@
     <string-array name="spinner_items">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favourites</item>
     </string-array>
 </resources>

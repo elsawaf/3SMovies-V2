@@ -1,8 +1,14 @@
 package com.elsawaf.thebrilliant.a3smovies;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,23 +20,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elsawaf.thebrilliant.a3smovies.data.MovieContract;
 import com.elsawaf.thebrilliant.a3smovies.model.Movie;
 import com.elsawaf.thebrilliant.a3smovies.model.MoviesList;
 import com.elsawaf.thebrilliant.a3smovies.utils.Constants;
 import com.elsawaf.thebrilliant.a3smovies.utils.NetworkUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
-        AdapterView.OnItemSelectedListener, MoviesAdapter.MyOnClickListener {
+        AdapterView.OnItemSelectedListener, MoviesAdapter.MyOnClickListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "elsawaf";
     private RecyclerView recyclerView;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements
     private MoviesAdapter adapter;
     private TextView emptyTextView;
     private ProgressBar progressBar;
+
+    private static final int MOVIE_LOADER_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements
             case 1:
                 makeRetrofitCall(Constants.SORT_MOVIES_BY_TOPRATED);
                 break;
+            case 2:
+                getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+                break;
         }
     }
 
@@ -138,5 +147,58 @@ public class MainActivity extends AppCompatActivity implements
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(Constants.KEY_MOVIE_DATA, movies.get(position));
         startActivity(intent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new AsyncTaskLoader<Cursor>(this) {
+            // Initialize a Cursor, this will hold all the movie data
+            Cursor mMovieData = null;
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+                try {
+                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mMovieData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mMovieData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mMovieData = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        MoviesCursorAdapter favouriteMoviesAdapter = new MoviesCursorAdapter(data, this);
+        recyclerView.setAdapter(favouriteMoviesAdapter);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+
     }
 }

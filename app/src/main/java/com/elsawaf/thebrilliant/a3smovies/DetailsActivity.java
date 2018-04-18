@@ -1,14 +1,19 @@
 package com.elsawaf.thebrilliant.a3smovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.elsawaf.thebrilliant.a3smovies.data.MovieContract;
 import com.elsawaf.thebrilliant.a3smovies.model.Movie;
 import com.elsawaf.thebrilliant.a3smovies.model.MovieReview;
 import com.elsawaf.thebrilliant.a3smovies.model.MovieTrailer;
@@ -26,7 +31,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends AppCompatActivity implements TrailersAdapter.MyOnClickListener {
+public class DetailsActivity extends AppCompatActivity implements TrailersAdapter.MyOnClickListener,
+        View.OnClickListener {
 
     @BindView(R.id.image_view_poster)
     ImageView posterImageView;
@@ -44,6 +50,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     RecyclerView trailersRecyclerView;
     @BindView(R.id.reviews_recycler_view)
     RecyclerView reviewsRecyclerView;
+    @BindView(R.id.addToFavouriteBtn)
+    Button addToFavouriteBtn;
 
     private ArrayList<MovieTrailer> movieTrailers;
     private TrailersAdapter trailersAdapter;
@@ -54,6 +62,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
+        addToFavouriteBtn.setOnClickListener(this);
 
         movie = getIntent().getParcelableExtra(Constants.KEY_MOVIE_DATA);
 
@@ -125,5 +134,22 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getOriginalTitle());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+
+        // Insert new movie data via a ContentResolver
+        Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+
+        if (uri != null) {
+            // added success
+            addToFavouriteBtn.setText("Added");
+        }
     }
 }
