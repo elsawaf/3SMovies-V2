@@ -22,6 +22,7 @@ import com.elsawaf.thebrilliant.a3smovies.model.MoviesList;
 import com.elsawaf.thebrilliant.a3smovies.utils.Constants;
 import com.elsawaf.thebrilliant.a3smovies.utils.MoviesLoader;
 import com.elsawaf.thebrilliant.a3smovies.utils.NetworkUtils;
+import com.elsawaf.thebrilliant.a3smovies.utils.ScreenUtils;
 
 import java.util.ArrayList;
 
@@ -59,7 +60,10 @@ public class MainActivity extends AppCompatActivity implements
         adapter = new MoviesAdapter(movies, this, this);
         recyclerView.setAdapter(adapter);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        // Rather than hard-code the values in specific numbers i.e 2, we will calculate
+        // the no. of possible columns at runtime and then use that to set on our GridLayoutManager.
+        int numberOfColumns = ScreenUtils.calculateNoOfColumns(this);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
 
         spinner.setOnItemSelectedListener(this);
@@ -87,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
                 if (response != null){
-                    Log.d(TAG, "onResponse: " + response.code());
                     MoviesList list = response.body();
                     movies = (ArrayList<Movie>) list.getResults();
                     adapter.updateData(movies);
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.i(TAG, "onCreateLoader: ");
         return new MoviesLoader(this);
     }
 
