@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,10 +17,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.elsawaf.thebrilliant.a3smovies.data.MovieContract;
 import com.elsawaf.thebrilliant.a3smovies.model.Movie;
 import com.elsawaf.thebrilliant.a3smovies.model.MoviesList;
 import com.elsawaf.thebrilliant.a3smovies.utils.Constants;
+import com.elsawaf.thebrilliant.a3smovies.utils.MoviesLoader;
 import com.elsawaf.thebrilliant.a3smovies.utils.NetworkUtils;
 
 import java.util.ArrayList;
@@ -156,49 +155,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new AsyncTaskLoader<Cursor>(this) {
-            // Initialize a Cursor, this will hold all the movie data
-            Cursor mMovieData = null;
-
-            // loadInBackground() performs asynchronous loading of data
-            @Override
-            public Cursor loadInBackground() {
-                try {
-                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                            null,
-                            null,
-                            null,
-                            null);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            // onStartLoading() is called when a loader first starts loading data
-            @Override
-            protected void onStartLoading() {
-                if (mMovieData != null) {
-                    // Delivers any previously loaded data immediately
-                    deliverResult(mMovieData);
-                } else {
-                    // Force a new load
-                    forceLoad();
-                }
-            }
-
-            // deliverResult sends the result of the load, a Cursor, to the registered listener
-            public void deliverResult(Cursor data) {
-                mMovieData = data;
-                super.deliverResult(data);
-            }
-        };
+        return new MoviesLoader(this);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        // to prevent loading favourites list each time user come back to activity
+        // to prevent displaying favourites list each time user come back to activity
+        // even if he was choice another list
         if (mUserChoice == 2) {
             MoviesCursorAdapter favouriteMoviesAdapter = new MoviesCursorAdapter(data, this);
             recyclerView.setAdapter(favouriteMoviesAdapter);
