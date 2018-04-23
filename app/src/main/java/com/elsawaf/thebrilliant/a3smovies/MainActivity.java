@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements
                     if (mSavedRecyclerLayoutState != null) {
                         // apply list state after we added the data
                         recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+                        // to prevent app applying this state if user choice other list
+//                        mSavedRecyclerLayoutState = null;
                     }
                 }
                 progressBar.setVisibility(View.INVISIBLE);
@@ -142,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+        mSavedRecyclerLayoutState = null;
         switch (pos) {
             case 0:
                 mUserChoice = 0;
