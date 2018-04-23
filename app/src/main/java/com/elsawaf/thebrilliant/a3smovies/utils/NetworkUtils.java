@@ -6,12 +6,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import com.elsawaf.thebrilliant.a3smovies.BuildConfig;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -51,11 +49,13 @@ public class NetworkUtils {
     }
 
     public static MoviesInterface getRetrofitClient(){
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(loggingInterceptor);
+
+        if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(loggingInterceptor);
+        }
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(MOVIES_BASE_URL)
