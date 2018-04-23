@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     private int mUserChoice;
 
     public static final String KEY_STATE_RV_POSITION = "recyclerViewPosition";
+    public static final String KEY_STATE_USER_CHOICE = "userListChoice";
     Parcelable mSavedRecyclerLayoutState;
 
     @Override
@@ -71,11 +72,13 @@ public class MainActivity extends AppCompatActivity implements
         if (savedInstanceState != null) {
             // restore list state if activity is recreated then will using it after load the data
             mSavedRecyclerLayoutState = savedInstanceState.getParcelable(KEY_STATE_RV_POSITION);
+            mUserChoice = savedInstanceState.getInt(KEY_STATE_USER_CHOICE, 0);
+            displayMoviesList(mUserChoice);
         }
-
-        if (NetworkUtils.hasNetworkAccess(this)){
+        else if (NetworkUtils.hasNetworkAccess(this)){
             mUserChoice = 0;
-            makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
+            displayMoviesList(mUserChoice);
+//            makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
         }
         else {
             Toast.makeText(this, R.string.title_no_network, Toast.LENGTH_SHORT).show();
@@ -160,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         // save the list state
         outState.putParcelable(KEY_STATE_RV_POSITION, recyclerView.getLayoutManager().onSaveInstanceState());
+        // save the use choice
+        outState.putInt(KEY_STATE_USER_CHOICE, mUserChoice);
     }
 
     @Override
