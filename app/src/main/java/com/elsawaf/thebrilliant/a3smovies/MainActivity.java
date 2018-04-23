@@ -3,6 +3,7 @@ package com.elsawaf.thebrilliant.a3smovies;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -46,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements
     // this to track the movies list that the user choice
     private int mUserChoice;
 
+    public static final String KEY_STATE_RV_POSITION = "recyclerViewPosition";
+    Parcelable mSavedRecyclerLayoutState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements
         int numberOfColumns = ScreenUtils.calculateNoOfColumns(this);
         GridLayoutManager layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
+
+        if (savedInstanceState != null) {
+            // restore list state if activity is recreated then will using it after load the data
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(KEY_STATE_RV_POSITION);
+        }
 
         spinner.setOnItemSelectedListener(this);
 
@@ -94,7 +103,12 @@ public class MainActivity extends AppCompatActivity implements
                     MoviesList list = response.body();
                     movies = (ArrayList<Movie>) list.getResults();
                     adapter.updateData(movies);
+                    // we need to add adapter in case of user was choice the favorites list
                     recyclerView.setAdapter(adapter);
+                    if (mSavedRecyclerLayoutState != null) {
+                        // apply list state after we added the data
+                        recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+                    }
                 }
                 progressBar.setVisibility(View.INVISIBLE);
                 toggleEmptyView();
@@ -147,6 +161,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // save the list state
+        outState.putParcelable(KEY_STATE_RV_POSITION, recyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     @Override
