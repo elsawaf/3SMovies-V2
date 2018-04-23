@@ -11,10 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,12 +32,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements
-        AdapterView.OnItemSelectedListener, MoviesAdapter.MyOnClickListener,
+        MoviesAdapter.MyOnClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "elsawafApp";
     private RecyclerView recyclerView;
-    private Spinner spinner;
     private ArrayList<Movie> movies;
     private MoviesAdapter adapter;
     private TextView emptyTextView;
@@ -57,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements
 
         recyclerView = findViewById(R.id.recycler_view);
         emptyTextView = findViewById(R.id.text_view_empty);
-        spinner = findViewById(R.id.spinner_movies);
         progressBar = findViewById(R.id.progress_bar_movies);
 
         movies =  new ArrayList<>();
@@ -74,8 +72,6 @@ public class MainActivity extends AppCompatActivity implements
             // restore list state if activity is recreated then will using it after load the data
             mSavedRecyclerLayoutState = savedInstanceState.getParcelable(KEY_STATE_RV_POSITION);
         }
-
-        spinner.setOnItemSelectedListener(this);
 
         if (NetworkUtils.hasNetworkAccess(this)){
             mUserChoice = 0;
@@ -142,10 +138,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-        mSavedRecyclerLayoutState = null;
-        switch (pos) {
+    private void displayMoviesList(int choice) {
+        switch (choice) {
             case 0:
                 mUserChoice = 0;
                 makeRetrofitCall(Constants.SORT_MOVIES_BY_POPULAR);
@@ -162,15 +156,33 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // save the list state
         outState.putParcelable(KEY_STATE_RV_POSITION, recyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId){
+            case R.id.action_popular_list:
+                displayMoviesList(0);
+                break;
+            case R.id.action_top_rated:
+                displayMoviesList(1);
+                break;
+            default:
+                displayMoviesList(2);
+                break;
+        }
+        return true;
     }
 
     @Override

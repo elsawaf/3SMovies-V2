@@ -7,21 +7,6 @@
     tools:ignore="RtlHardcoded">
 
     <TextView
-        android:id="@+id/text_view_show_movies"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_show_movies"
-        android:textSize="25sp"/>
-
-    <Spinner
-        android:id="@+id/spinner_movies"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/text_view_show_movies"
-        android:entries="@array/spinner_items"
-        />
-
-    <TextView
         android:id="@+id/text_view_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

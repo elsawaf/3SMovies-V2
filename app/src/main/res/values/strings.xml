@@ -5,9 +5,7 @@
     <string name="title_no_network">Please, check the internet connection</string>
     <string name="activity_movie_detail">Movie Detail</string>
 
-    <string-array name="spinner_items">
-        <item>Most Popular</item>
-        <item>Top Rated</item>
-        <item>Favourites</item>
-    </string-array>
+    <string name="title_most_popular">Most Popular</string>
+    <string name="title_top_rated">Top Rated</string>
+    <string name="title_favourites">Favourites</string>
 </resources>
