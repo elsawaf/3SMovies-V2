@@ -105,10 +105,7 @@ public class MainActivity extends AppCompatActivity implements
                     // we need to add adapter in case of user was choice the favorites list
                     recyclerView.setAdapter(adapter);
                     if (mSavedRecyclerLayoutState != null) {
-                        // apply list state after we added the data
-                        recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
-                        // to prevent app applying this state if user choice other list
-//                        mSavedRecyclerLayoutState = null;
+                        retrieveListState();
                     }
                 }
                 progressBar.setVisibility(View.INVISIBLE);
@@ -167,6 +164,13 @@ public class MainActivity extends AppCompatActivity implements
         outState.putInt(KEY_STATE_USER_CHOICE, mUserChoice);
     }
 
+    private void retrieveListState() {
+        // apply list state after we added the data
+        recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+        // to prevent app applying this state if user choice another list
+        mSavedRecyclerLayoutState = null;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -210,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements
         if (mUserChoice == 2) {
             MoviesCursorAdapter favouriteMoviesAdapter = new MoviesCursorAdapter(data, this);
             recyclerView.setAdapter(favouriteMoviesAdapter);
+            if (mSavedRecyclerLayoutState != null) {
+                retrieveListState();
+            }
         }
         Log.i(TAG, "onLoadFinished: ");
     }
