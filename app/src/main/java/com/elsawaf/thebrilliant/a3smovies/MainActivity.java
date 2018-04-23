@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity implements
 
         Call<MoviesList> call;
         if (sortBy == Constants.SORT_MOVIES_BY_POPULAR)
-            call = NetworkUtils.getRetrofitClient().getPopularList(NetworkUtils.MY_API_KEY);
+            call = NetworkUtils.getRetrofitClient(this).getPopularList(NetworkUtils.MY_API_KEY);
         else
-            call = NetworkUtils.getRetrofitClient().getTopRatedList(NetworkUtils.MY_API_KEY);
+            call = NetworkUtils.getRetrofitClient(this).getTopRatedList(NetworkUtils.MY_API_KEY);
 
         call.enqueue(new Callback<MoviesList>() {
             @Override

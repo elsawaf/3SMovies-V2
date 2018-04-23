@@ -9,10 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.elsawaf.thebrilliant.a3smovies.data.MovieContract;
 import com.elsawaf.thebrilliant.a3smovies.model.Movie;
@@ -89,7 +87,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     }
 
     private void makeReviewsCall() {
-        Call<ReviewsList> call = NetworkUtils.getRetrofitClient().getReviewsList(movie.getId(), NetworkUtils.MY_API_KEY);
+        Call<ReviewsList> call = NetworkUtils.getRetrofitClient(this).getReviewsList(movie.getId(), NetworkUtils.MY_API_KEY);
         call.enqueue(new Callback<ReviewsList>() {
             @Override
             public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
@@ -107,7 +105,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
     }
 
     private void makeTrailersCall() {
-        Call<TrailersList> call = NetworkUtils.getRetrofitClient().getTrailersList(movie.getId(), NetworkUtils.MY_API_KEY);
+        Call<TrailersList> call = NetworkUtils.getRetrofitClient(this).getTrailersList(movie.getId(), NetworkUtils.MY_API_KEY);
         call.enqueue(new Callback<TrailersList>() {
             @Override
             public void onResponse(Call<TrailersList> call, Response<TrailersList> response) {
