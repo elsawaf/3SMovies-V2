@@ -76,7 +76,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
 
         checkFavouritesMovies(movie.getId());
 
-        LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
         makeTrailersCall();
 

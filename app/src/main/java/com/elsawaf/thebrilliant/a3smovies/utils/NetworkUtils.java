@@ -53,6 +53,23 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildYoutubeImageUrl (String videoID){
+        String youtubeBaseUrl = "http://img.youtube.com/vi/";
+        Uri builtUri = Uri.parse(youtubeBaseUrl).buildUpon()
+                .appendPath(videoID)
+                .appendEncodedPath("0.jpg")
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "buildUrl: " + url);
+        return url;
+    }
+
     public static MoviesInterface getRetrofitClient(final Context context){
 //        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 

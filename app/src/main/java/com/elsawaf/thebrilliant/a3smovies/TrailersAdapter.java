@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.elsawaf.thebrilliant.a3smovies.model.Movie;
 import com.elsawaf.thebrilliant.a3smovies.model.MovieTrailer;
 import com.elsawaf.thebrilliant.a3smovies.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -43,7 +41,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         MovieTrailer movieTrailer = movieTrailers.get(position);
-        holder.videoName.setText(movieTrailer.getName());
+        String thumbnailUrl = NetworkUtils.buildYoutubeImageUrl(movieTrailer.getKey()).toString();
+        Picasso.with(context).load(thumbnailUrl).into(holder.videoThumbnail);
     }
 
     @Override
@@ -54,11 +53,11 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView videoName;
+        public ImageView videoThumbnail;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            videoName = itemView.findViewById(R.id.video_name_text_view);
+            videoThumbnail = itemView.findViewById(R.id.imageViewVideoThumbnail);
             itemView.setOnClickListener(this);
         }
 
